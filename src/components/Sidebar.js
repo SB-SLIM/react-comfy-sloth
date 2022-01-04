@@ -10,13 +10,14 @@ import { useUserContext } from "../context/user_context";
 import clsx from "clsx";
 
 const Sidebar = () => {
-  const isOpen = false;
+  const { isSidebarOpen, sidebarClose } = useProductsContext();
+
   return (
     <SidebarContainer>
-      <aside className={clsx("sidebar", isOpen && "show-sidebar")}>
+      <aside className={clsx("sidebar", isSidebarOpen && "show-sidebar")}>
         <div className="sidebar-header">
           <img src={logo} alt="logo" className="logo" />
-          <button className="close-btn" type="button">
+          <button className="close-btn" type="button" onClick={sidebarClose}>
             <FaTimes />
           </button>
         </div>
@@ -25,12 +26,16 @@ const Sidebar = () => {
             const { id, text, url } = link;
             return (
               <li key={id}>
-                <Link to={url}>{text}</Link>
+                <Link to={url} onClick={sidebarClose}>
+                  {text}
+                </Link>
               </li>
             );
           })}
           <li>
-            <Link to="/checkout">Checkout</Link>
+            <Link to="/checkout" onClick={sidebarClose}>
+              Checkout
+            </Link>
           </li>
         </ul>
         <CartButtons />
