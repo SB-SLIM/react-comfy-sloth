@@ -2,7 +2,17 @@ import React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 const ErrorPage = () => {
-  return <h4>error pages</h4>;
+  return (
+    <Wrapper className="page-100">
+      <section>
+        <h4>404</h4>
+        <h3>Sorry, the page you tried cannot be found </h3>
+        <Link className="btn" to="/">
+          Back Home
+        </Link>
+      </section>
+    </Wrapper>
+  );
 }
 
 const Wrapper = styled.main`
