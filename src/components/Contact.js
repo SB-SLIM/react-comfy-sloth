@@ -1,7 +1,10 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from "react";
+import styled from "styled-components";
+import { useForm, ValidationError } from "@formspree/react";
 
 const Contact = () => {
+  const [state, handleSubmit] = useForm("xlezdpqe");
+
   return (
     <Wrapper>
       <div className="section-center">
@@ -13,21 +16,32 @@ const Contact = () => {
             tempora et sunt, a quos nulla enim explicabo nobis esse
             voluptatibus!
           </p>
-          <form className="contact-form">
-            <input
-              type="email"
-              className="form-input"
-              placeholder="enter email"
-            />
-            <button type="submit" className="submit-btn">
-              subscribe
-            </button>
-          </form>
+          {state.succeeded ? (
+            <h3>Thanks for joining!</h3>
+          ) : (
+            <form className="contact-form" onSubmit={handleSubmit}>
+              <input
+                type="email"
+                className="form-input"
+                placeholder="enter email"
+                name="email"
+                id="email"
+              />
+              <ValidationError
+                prefix="Email"
+                field="email"
+                errors={state.errors}
+              />
+              <button type="submit" className="submit-btn">
+                subscribe
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </Wrapper>
   );
-}
+};
 const Wrapper = styled.section`
   padding: 5rem 0;
   h3 {
@@ -91,6 +105,6 @@ const Wrapper = styled.section`
   @media (min-width: 1280px) {
     padding: 15rem 0;
   }
-`
+`;
 
-export default Contact
+export default Contact;
