@@ -1,7 +1,6 @@
-import axios from "axios";
 import React, { useContext, useEffect, useReducer } from "react";
-import reducer from "../hooks/products_reducer";
-import { products_url as url } from "../utils/constants";
+
+
 import {
   SIDEBAR_OPEN,
   SIDEBAR_CLOSE,
@@ -17,6 +16,12 @@ import { useProducts } from "../hooks/products_reducer";
 const ProductsContext = React.createContext();
 
 export const ProductsProvider = ({ children }) => {
+  const { fetchProducts, products, error, featuredProducts } = useProducts();
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  console.log(featuredProducts);
   return (
     <ProductsContext.Provider value={useProducts()}>
       {children}
