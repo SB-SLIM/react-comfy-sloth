@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useReducer } from "react";
 
-
 import {
   SIDEBAR_OPEN,
   SIDEBAR_CLOSE,
@@ -16,14 +15,33 @@ import { useProducts } from "../hooks/products_reducer";
 const ProductsContext = React.createContext();
 
 export const ProductsProvider = ({ children }) => {
-  const { fetchProducts, products, error, featuredProducts } = useProducts();
+  const {
+    isSidebarOpen,
+    isProductsLoading,
+    products,
+    errorProducts,
+    featuredProducts,
+    sidebarOpen,
+    sidebarClose,
+    fetchProducts,
+  } = useProducts();
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  console.log(featuredProducts);
   return (
-    <ProductsContext.Provider value={useProducts()}>
+    <ProductsContext.Provider
+      value={{
+        isSidebarOpen,
+        isProductsLoading,
+        products,
+        errorProducts,
+        featuredProducts,
+        sidebarOpen,
+        sidebarClose,
+        fetchProducts,
+      }}
+    >
       {children}
     </ProductsContext.Provider>
   );

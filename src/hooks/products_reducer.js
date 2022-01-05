@@ -27,9 +27,7 @@ const reducer = (state, action) => {
         products: action.payload,
         isProductsLoading: false,
         errorProducts: { isError: false, msg: "" },
-        featuredProducts: action.payload.data.filter(
-          (p) => p.featured === true
-        ),
+        featuredProducts: action.payload.filter((p) => p.featured === true),
       };
     case GET_PRODUCTS_ERROR:
       return {
@@ -57,7 +55,7 @@ export const useProducts = () => {
     isSidebarOpen: state.isSidebarOpen,
     isProductsLoading: state.isProductsLoading,
     products: state.products,
-    error: state.error,
+    errorProducts: state.errorProducts,
     featuredProducts: state.featuredProducts,
     sidebarOpen: () => {
       dispatch({ type: SIDEBAR_OPEN });
