@@ -1,5 +1,6 @@
 import { useReducer } from "react";
 import { products_url as url } from "../utils/constants";
+import { single_product_url } from "../utils/constants";
 
 import {
   SIDEBAR_OPEN,
@@ -35,6 +36,21 @@ const reducer = (state, action) => {
         errorProducts: action.payload,
         isProductsLoading: false,
       };
+    case GET_SINGLE_PRODUCT_BEGIN:
+      return { ...state, isProductLoading: true };
+    case GET_SINGLE_PRODUCT_SUCCESS:
+      return {
+        ...state,
+        product: action.payload,
+        isProductLoading: false,
+        errorProduct: { isError: false, msg: "" },
+      };
+    case GET_SINGLE_PRODUCT_ERROR:
+      return {
+        ...state,
+        errorProduct: action.payload,
+        isProductLoading: false,
+      };
     default:
       throw new Error(`No Matching "${action.type}" - action type`);
   }
@@ -46,6 +62,9 @@ const initialState = {
   products: [],
   errorProducts: { isError: false, msg: "" },
   featuredProducts: [],
+  product: {},
+  isProductLoading: false,
+  errorProduct: { isError: false, msg: "" },
 };
 
 export const useProducts = () => {
@@ -57,6 +76,9 @@ export const useProducts = () => {
     products: state.products,
     errorProducts: state.errorProducts,
     featuredProducts: state.featuredProducts,
+    product: state.product,
+    isProductLoading: state.isProductLoading,
+    errorProduct: state.errorProduct,
     sidebarOpen: () => {
       dispatch({ type: SIDEBAR_OPEN });
     },
@@ -70,6 +92,15 @@ export const useProducts = () => {
         dispatch({ type: GET_PRODUCTS_ERROR, payload: data });
       } else {
         dispatch({ type: GET_PRODUCTS_SUCCESS, payload: data });
+      }
+    },
+    fetchProduct: async (id) => {
+      dispatch({ type: GET_SINGLE_PRODUCT_BEGIN });
+      const data = await axiosApi(`${single_product_url}${id}`);
+      if (data.isError === true) {
+        dispatch({ type: GET_SINGLE_PRODUCT_ERROR, payload: data });
+      } else {
+        dispatch({ type: GET_SINGLE_PRODUCT_SUCCESS, payload: data });
       }
     },
   };

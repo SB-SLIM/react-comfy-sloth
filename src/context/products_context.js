@@ -1,15 +1,4 @@
 import React, { useContext, useEffect, useReducer } from "react";
-
-import {
-  SIDEBAR_OPEN,
-  SIDEBAR_CLOSE,
-  GET_PRODUCTS_BEGIN,
-  GET_PRODUCTS_SUCCESS,
-  GET_PRODUCTS_ERROR,
-  GET_SINGLE_PRODUCT_BEGIN,
-  GET_SINGLE_PRODUCT_SUCCESS,
-  GET_SINGLE_PRODUCT_ERROR,
-} from "../actions";
 import { useProducts } from "../hooks/products_reducer";
 
 const ProductsContext = React.createContext();
@@ -24,6 +13,10 @@ export const ProductsProvider = ({ children }) => {
     sidebarOpen,
     sidebarClose,
     fetchProducts,
+    fetchProduct,
+    isProductLoading,
+    errorProduct,
+    product,
   } = useProducts();
   useEffect(() => {
     fetchProducts();
@@ -40,6 +33,10 @@ export const ProductsProvider = ({ children }) => {
         sidebarOpen,
         sidebarClose,
         fetchProducts,
+        fetchProduct,
+        isProductLoading,
+        errorProduct,
+        product,
       }}
     >
       {children}
