@@ -1,7 +1,5 @@
-import axios from "axios";
 import React, { useContext, useEffect, useReducer } from "react";
-import reducer from "../hooks/products_reducer";
-import { products_url as url } from "../utils/constants";
+
 import {
   SIDEBAR_OPEN,
   SIDEBAR_CLOSE,
@@ -17,8 +15,33 @@ import { useProducts } from "../hooks/products_reducer";
 const ProductsContext = React.createContext();
 
 export const ProductsProvider = ({ children }) => {
+  const {
+    isSidebarOpen,
+    isProductsLoading,
+    products,
+    errorProducts,
+    featuredProducts,
+    sidebarOpen,
+    sidebarClose,
+    fetchProducts,
+  } = useProducts();
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   return (
-    <ProductsContext.Provider value={useProducts()}>
+    <ProductsContext.Provider
+      value={{
+        isSidebarOpen,
+        isProductsLoading,
+        products,
+        errorProducts,
+        featuredProducts,
+        sidebarOpen,
+        sidebarClose,
+        fetchProducts,
+      }}
+    >
       {children}
     </ProductsContext.Provider>
   );
