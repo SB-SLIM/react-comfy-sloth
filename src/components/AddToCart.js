@@ -1,14 +1,31 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
-import { Link } from 'react-router-dom'
-import { FaCheck } from 'react-icons/fa'
-import { useCartContext } from '../context/cart_context'
-import AmountButtons from './AmountButtons'
+import React, { useState } from "react";
+import styled from "styled-components";
+import { Link } from "react-router-dom";
+import { FaCheck } from "react-icons/fa";
+import { useCartContext } from "../context/cart_context";
+import AmountButtons from "./AmountButtons";
 import clsx from "clsx";
 
 const AddToCart = ({ product }) => {
   const { id, stock, colors } = product;
   const [mainColor, setMainColor] = useState(colors[0]);
+  const [amount, setAmount] = useState(1);
+
+  const increase = () => {
+    if (amount >= stock) {
+      setAmount(stock);
+    } else {
+      setAmount(amount + 1);
+    }
+  };
+
+  const decrease = () => {
+    if (amount <= 1) {
+      setAmount(1);
+    } else {
+      setAmount(amount - 1);
+    }
+  };
 
   return (
     <Wrapper>
@@ -30,7 +47,14 @@ const AddToCart = ({ product }) => {
         </div>
       </div>
       <div className="btn-container">
-        <AmountButtons />
+        <AmountButtons
+          amount={amount}
+          increase={increase}
+          decrease={decrease}
+        />
+        <Link to="/cart" className="btn">
+          add to cart
+        </Link>
       </div>
     </Wrapper>
   );
@@ -80,5 +104,5 @@ const Wrapper = styled.section`
     margin-top: 1rem;
     width: 140px;
   }
-`
-export default AddToCart
+`;
+export default AddToCart;
