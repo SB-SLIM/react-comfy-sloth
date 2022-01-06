@@ -4,10 +4,37 @@ import { Link } from 'react-router-dom'
 import { FaCheck } from 'react-icons/fa'
 import { useCartContext } from '../context/cart_context'
 import AmountButtons from './AmountButtons'
+import clsx from "clsx";
 
-const AddToCart = () => {
-  return <h4>addToCart </h4>
-}
+const AddToCart = ({ product }) => {
+  const { id, stock, colors } = product;
+  const [mainColor, setMainColor] = useState(colors[0]);
+
+  return (
+    <Wrapper>
+      <div className="colors">
+        <span>Colors</span>
+        <div>
+          {colors.map((color, index) => {
+            return (
+              <button
+                className={clsx("color-btn", mainColor === color && "active")}
+                key={index}
+                style={{ backgroundColor: color }}
+                onClick={() => setMainColor(colors[index])}
+              >
+                {mainColor === color && <FaCheck />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div className="btn-container">
+        <AmountButtons />
+      </div>
+    </Wrapper>
+  );
+};
 
 const Wrapper = styled.section`
   margin-top: 2rem;
