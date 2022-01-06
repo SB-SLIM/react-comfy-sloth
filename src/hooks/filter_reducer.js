@@ -39,6 +39,4 @@ export const useFilterproducts = () => {
       dispatch({ type: LOAD_PRODUCTS, payload: products });
     },
   };
-};
-
-export default useFilterproducts;
+}

@@ -1,18 +1,19 @@
 import React, { useEffect, useContext, useReducer } from "react";
-import useFilterproducts from "../hooks/filter_reducer";
+import { useFilterproducts } from "../hooks/filter_reducer";
 import { useProductsContext } from "./products_context";
 
 const FilterContext = React.createContext();
 
 export const FilterProvider = ({ children }) => {
-  const { all_products, loadProducts } = useFilterproducts();
+  const { filtered_products, loadProducts } = useFilterproducts();
   const { products } = useProductsContext();
+
   useEffect(() => {
     loadProducts(products);
   }, [products]);
 
   return (
-    <FilterContext.Provider value="filter context">
+    <FilterContext.Provider value={{ filtered_products }}>
       {children}
     </FilterContext.Provider>
   );
