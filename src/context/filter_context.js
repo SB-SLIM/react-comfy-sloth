@@ -4,6 +4,7 @@ import { useProductsContext } from "./products_context";
 
 const FilterContext = React.createContext();
 
+
 export const FilterProvider = ({ children }) => {
   const { all_products, loadProducts } = useFilterproducts();
   const { products } = useProductsContext();
