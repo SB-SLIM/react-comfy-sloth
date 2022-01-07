@@ -6,8 +6,13 @@ import { FaCheck } from "react-icons/fa";
 import clsx from "clsx";
 
 const Filters = () => {
-  const { clearFilters, updateFilters, filtered_products, filters } =
-    useFilterContext();
+  const {
+    clearFilters,
+    updateFilters,
+    filtered_products,
+    filters,
+    all_products,
+  } = useFilterContext();
   const {
     text,
     company,
@@ -19,9 +24,9 @@ const Filters = () => {
     shipping,
   } = filters;
 
-  const categories = getUniqueValues(filtered_products, "category");
-  const compagnies = getUniqueValues(filtered_products, "company");
-  const colors = getUniqueValues(filtered_products, "colors");
+  const categories = getUniqueValues(all_products, "category");
+  const companies = getUniqueValues(all_products, "company");
+  const colors = getUniqueValues(all_products, "colors");
 
   return (
     <Wrapper>
@@ -56,15 +61,15 @@ const Filters = () => {
             })}
           </div>
           <div className="form-control">
-            <h5>compagny</h5>
+            <h5>company</h5>
             <select
-              name="compagny"
-              id="compagny"
+              name="company"
+              id="company"
               className="company"
               value={company}
               onChange={updateFilters}
             >
-              {compagnies.map((c, index) => {
+              {companies.map((c, index) => {
                 return (
                   <option key={index} value={c}>
                     {c}
@@ -73,7 +78,66 @@ const Filters = () => {
               })}
             </select>
           </div>
+          <div className="form-control ">
+            <h5>colors</h5>
+            <div className="colors">
+              {colors.map((c, index) => {
+                if (c === "all") {
+                  return (
+                    <button
+                      className={clsx("all-btn", color === c && "active")}
+                      type="button"
+                      value={c}
+                      key={index}
+                      name="color"
+                      onClick={updateFilters}
+                    >
+                      {c}
+                    </button>
+                  );
+                }
+                return (
+                  <button
+                    className={clsx("color-btn", color === c && "active")}
+                    style={{ background: c }}
+                    type="button"
+                    value={c}
+                    name="color"
+                    key={index}
+                    onClick={updateFilters}
+                  >
+                    {color === c && <FaCheck />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <div className="form-control">
+            <h5>price</h5>
+            <p className="price">{formatPrice(price)}</p>
+            <input
+              type="range"
+              name="price"
+              min={min_price}
+              max={max_price}
+              value={price}
+              onChange={updateFilters}
+            />
+          </div>
+          <div className="form-control shipping">
+            <label htmlFor="shipping">free shipping</label>
+            <input
+              type="checkbox"
+              name="shipping"
+              id="shipping"
+              onChange={updateFilters}
+              checked={shipping}
+            />
+          </div>
         </form>
+        <button type="button" className="clear-btn" onClick={clearFilters}>
+          clear filters
+        </button>
       </div>
     </Wrapper>
   );

@@ -7,6 +7,7 @@ const FilterContext = React.createContext();
 export const FilterProvider = ({ children }) => {
   const {
     filtered_products,
+    all_products,
     loadProducts,
     gridView,
     setListview,
@@ -38,6 +39,7 @@ export const FilterProvider = ({ children }) => {
         setGridview,
         gridView,
         filtered_products,
+        all_products,
         sortValue,
         updateFilters,
         clearFilters,
