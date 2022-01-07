@@ -13,10 +13,14 @@ import { useReducer } from "react";
 const reducer = (state, action) => {
   switch (action.type) {
     case LOAD_PRODUCTS:
+      let maxPrice = Math.max(...action.payload.map((p) => p.price));
+      let minPrice = Math.min(...action.payload.map((p) => p.price));
+
       return {
         ...state,
         all_products: [...action.payload],
         filtered_products: [...action.payload],
+        filters: { ...state.filters, min_price: minPrice, max_price: maxPrice },
       };
     case SET_LISTVIEW:
       return { ...state, gridView: false };
@@ -53,6 +57,16 @@ const initialState = {
   filtered_products: [],
   gridView: true,
   sortValue: "price-lowest",
+  filters: {
+    text: "",
+    company: "all",
+    category: "all",
+    color: "all",
+    min_price: 0,
+    max_price: 0,
+    price: 0,
+    shipping: false,
+  },
 };
 
 export const useFilterproducts = () => {
