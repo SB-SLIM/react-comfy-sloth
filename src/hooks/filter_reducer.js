@@ -14,20 +14,27 @@ const reducer = (state, action) => {
   switch (action.type) {
     case LOAD_PRODUCTS:
       let maxPrice = Math.max(...action.payload.map((p) => p.price));
-      let minPrice = Math.min(...action.payload.map((p) => p.price));
 
       return {
         ...state,
         all_products: [...action.payload],
         filtered_products: [...action.payload],
-        filters: { ...state.filters, min_price: minPrice, max_price: maxPrice },
+        filters: {
+          ...state.filters,
+          max_price: maxPrice,
+          price: maxPrice,
+        },
       };
+
     case SET_LISTVIEW:
       return { ...state, gridView: false };
+
     case SET_GRIDVIEW:
       return { ...state, gridView: true };
+
     case UPDATE_SORT:
       return { ...state, sortValue: action.payload };
+
     case SORT_PRODUCTS:
       let tempList = [...state.filtered_products];
       if (state.sortValue === "price-lowest") {
@@ -47,6 +54,30 @@ const reducer = (state, action) => {
         });
       }
       return { ...state, filtered_products: tempList };
+
+    case UPDATE_FILTERS:
+      const { name, value } = action.payload;
+      return { ...state, filters: { ...state.filters, [name]: value } };
+
+    case CLEAR_FILTERS:
+      maxPrice = Math.max(...state.filtered_products.map((p) => p.price));
+      return {
+        ...state,
+        filters: {
+          text: "",
+          company: "all",
+          category: "all",
+          color: "all",
+          min_price: 0,
+          max_price: maxPrice,
+          price: maxPrice,
+          shipping: false,
+        },
+      };
+
+    case FILTER_PRODUCTS:
+      return { ...state };
+
     default:
       throw new Error(`No Matching "${action.type}" - action type`);
   }
@@ -77,6 +108,7 @@ export const useFilterproducts = () => {
     filtered_products: state.filtered_products,
     gridView: state.gridView,
     sortValue: state.sortValue,
+    filters: state.filters,
     loadProducts: (products) => {
       dispatch({ type: LOAD_PRODUCTS, payload: products });
     },
@@ -86,11 +118,23 @@ export const useFilterproducts = () => {
     setGridview: () => {
       dispatch({ type: SET_GRIDVIEW });
     },
-    updateSort: (value) => {
-      dispatch({ type: UPDATE_SORT, payload: value });
+    updateSort: (eventValue) => {
+      dispatch({ type: UPDATE_SORT, payload: eventValue });
     },
     sortProducts: () => {
       dispatch({ type: SORT_PRODUCTS });
+    },
+    updateFilters: (e) => {
+      const name = e.target.name;
+      const value = e.target.value;
+      console.log(name, value);
+      dispatch({ type: UPDATE_FILTERS, payload: { name, value } });
+    },
+    clearFilters: () => {
+      dispatch({ type: CLEAR_FILTERS });
+    },
+    filterProducts: () => {
+      dispatch({ type: FILTER_PRODUCTS });
     },
   };
 };

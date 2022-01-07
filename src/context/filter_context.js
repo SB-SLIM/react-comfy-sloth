@@ -14,23 +14,21 @@ export const FilterProvider = ({ children }) => {
     updateSort,
     sortValue,
     sortProducts,
+    updateFilters,
+    clearFilters,
+    filterProducts,
+    filters,
   } = useFilterproducts();
   const { products } = useProductsContext();
-
-  const sortType = {
-    "price-lowest": { type: "price", sort: "asc" },
-    "price-highest": { type: "price", sort: "desc" },
-    "name-a": { type: "price", sort: "asc" },
-    "name-z": { type: "price", sort: "desc" },
-  };
 
   useEffect(() => {
     loadProducts(products);
   }, [products]);
 
   useEffect(() => {
+    filterProducts();
     sortProducts();
-  }, [products, sortValue]);
+  }, [products, sortValue, filters]);
 
   return (
     <FilterContext.Provider
@@ -41,6 +39,9 @@ export const FilterProvider = ({ children }) => {
         gridView,
         filtered_products,
         sortValue,
+        updateFilters,
+        clearFilters,
+        filters,
       }}
     >
       {children}
