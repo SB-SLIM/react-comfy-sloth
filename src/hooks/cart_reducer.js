@@ -42,16 +42,27 @@ const reducer = (state, action) => {
           cartProducts: [...state.cartProducts, newItem],
         };
       }
-
+    case CLEAR_CART: {
+      return { totalItems: 0, totalPrice: 0, cartProducts: [] };
+    }
     default:
       throw new Error(`No Matching "${action.type}" - action type`);
+  }
+};
+
+const getLocalStorage = () => {
+  const localCart = localStorage.getItem("cart");
+  if (localCart) {
+    return JSON.parse(localCart);
+  } else {
+    return [];
   }
 };
 
 const initialState = {
   totalItems: 0,
   totalPrice: 0,
-  cartProducts: [],
+  cartProducts: getLocalStorage(),
 };
 export const useCart = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -64,6 +75,15 @@ export const useCart = () => {
         type: ADD_TO_CART,
         payload: { id, product, amount, color },
       });
+    },
+    removeItem: (id) => {
+      //TODO: Remove item from cart
+    },
+    toggleAmount: (id, value) => {
+      //TODO: toggle Amount
+    },
+    clearCart: () => {
+      dispatch({ type: CLEAR_CART });
     },
   };
 };
