@@ -1,33 +1,76 @@
-import React, { useState, useEffect } from 'react'
-import styled from 'styled-components'
-import { loadStripe } from '@stripe/stripe-js'
-import {
-  CardElement,
-  useStripe,
-  Elements,
-  useElements,
-} from '@stripe/react-stripe-js'
-import axios from 'axios'
-import { useCartContext } from '../context/cart_context'
-import { useUserContext } from '../context/user_context'
-import { formatPrice } from '../utils/helpers'
-import { useHistory } from 'react-router-dom'
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import axios from "axios";
+import { useCartContext } from "../context/cart_context";
+import CheckoutForm from "./CheckoutForm";
 
-const CheckoutForm = () => {
-  return <h2>hello from Stripe Checkout </h2>;
-}
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
 const StripeCheckout = () => {
+  const [clientSecret, setClientSecret] = useState("");
+  const { cartProducts, totalPrice, shippingFee, clearCart } = useCartContext();
+
+  const createPaymentIntent = async () => {
+    await axios
+      .post(
+        "/.netlify/functions/create-payment-intent",
+        JSON.stringify({ cartProducts, shippingFee, totalPrice })
+      )
+      .then((data) => {
+        return setClientSecret(data.data.clientSecret);
+      })
+      .catch((error) => console.error("SB-E: " + error));
+  };
+
+  useEffect(() => {
+    createPaymentIntent();
+  }, []);
+
+  const appearance = {
+    theme: "stripe",
+    variables: {
+      colorPrimary: "#32325d",
+      colorText: "#fa755a",
+    },
+  };
+  const options = {
+    clientSecret,
+    appearance,
+  };
+
   return (
     <Wrapper>
-      <CheckoutForm />
+      {clientSecret && (
+        <Elements options={options} stripe={stripePromise}>
+          <CheckoutForm />
+        </Elements>
+      )}
     </Wrapper>
-  )
-}
+  );
+};
 
 const Wrapper = styled.section`
+  #root {
+    display: flex;
+    align-items: center;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    height: 100vh;
+    width: 100vw;
+  }
+
   form {
     width: 30vw;
+    min-width: 500px;
     align-self: center;
     box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
       0px 2px 5px 0px rgba(50, 50, 93, 0.1),
@@ -35,54 +78,28 @@ const Wrapper = styled.section`
     border-radius: 7px;
     padding: 40px;
   }
-  input {
-    border-radius: 6px;
-    margin-bottom: 6px;
-    padding: 12px;
-    border: 1px solid rgba(50, 50, 93, 0.1);
-    max-height: 44px;
-    font-size: 16px;
-    width: 100%;
-    background: white;
-    box-sizing: border-box;
-  }
-  .result-message {
-    line-height: 22px;
-    font-size: 16px;
-  }
-  .result-message a {
-    color: rgb(89, 111, 214);
-    font-weight: 600;
-    text-decoration: none;
-  }
-  .hidden {
-    display: none;
-  }
-  #card-error {
+
+  #payment-message {
     color: rgb(105, 115, 134);
     font-size: 16px;
     line-height: 20px;
-    margin-top: 12px;
+    padding-top: 12px;
     text-align: center;
   }
+
+  #payment-element {
+    margin-bottom: 24px;
+  }
   #card-element {
-    border-radius: 4px 4px 0 0;
-    padding: 12px;
-    border: 1px solid rgba(50, 50, 93, 0.1);
-    max-height: 44px;
-    width: 100%;
-    background: white;
-    box-sizing: border-box;
+    margin-bottom: 24px;
   }
-  #payment-request-button {
-    margin-bottom: 32px;
-  }
+
   /* Buttons and links */
   button {
     background: #5469d4;
     font-family: Arial, sans-serif;
     color: #ffffff;
-    border-radius: 0 0 4px 4px;
+    border-radius: 4px;
     border: 0;
     padding: 12px 16px;
     font-size: 16px;
@@ -93,19 +110,23 @@ const Wrapper = styled.section`
     box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
     width: 100%;
   }
+
   button:hover {
     filter: contrast(115%);
   }
+
   button:disabled {
     opacity: 0.5;
     cursor: default;
   }
+
   /* spinner/processing state, errors */
   .spinner,
   .spinner:before,
   .spinner:after {
     border-radius: 50%;
   }
+
   .spinner {
     color: #ffffff;
     font-size: 22px;
@@ -119,11 +140,13 @@ const Wrapper = styled.section`
     -ms-transform: translateZ(0);
     transform: translateZ(0);
   }
+
   .spinner:before,
   .spinner:after {
     position: absolute;
-    content: '';
+    content: "";
   }
+
   .spinner:before {
     width: 10.4px;
     height: 20.4px;
@@ -136,6 +159,7 @@ const Wrapper = styled.section`
     -webkit-animation: loading 2s infinite ease 1.5s;
     animation: loading 2s infinite ease 1.5s;
   }
+
   .spinner:after {
     width: 10.4px;
     height: 10.2px;
@@ -148,6 +172,7 @@ const Wrapper = styled.section`
     -webkit-animation: loading 2s infinite ease;
     animation: loading 2s infinite ease;
   }
+
   @keyframes loading {
     0% {
       -webkit-transform: rotate(0deg);
@@ -158,11 +183,13 @@ const Wrapper = styled.section`
       transform: rotate(360deg);
     }
   }
+
   @media only screen and (max-width: 600px) {
     form {
       width: 80vw;
+      min-width: initial;
     }
   }
-`
+`;
 
-export default StripeCheckout
+export default StripeCheckout;
