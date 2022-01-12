@@ -7,7 +7,7 @@ const AuthWrapper = ({ children }) => {
   if (isLoading) {
     return (
       <Wrapper>
-        <div className="loading">Loading...</div>
+        <div className="loading"></div>
       </Wrapper>
     );
   }
