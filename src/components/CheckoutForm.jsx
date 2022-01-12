@@ -1,4 +1,4 @@
-import React, { createElement, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   PaymentElement,
   useStripe,
@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useCartContext } from "../context/cart_context";
 import { formatPrice } from "../utils/helpers.js";
 
-export default function CheckoutForm() {
+const CheckoutForm = () => {
   const { myUser } = useUserContext();
   const navigate = useNavigate();
   const { totalPrice, shippingFee, clearCart } = useCartContext();
@@ -52,6 +52,10 @@ export default function CheckoutForm() {
     });
   }, [stripe]);
 
+  const handelChange = (e) => {
+    setMessage(e.error ? e.error.message : "");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -62,26 +66,24 @@ export default function CheckoutForm() {
     }
 
     setIsLoading(true);
-
     console.log(elements);
     const clientSecret = elements._commonOptions.clientSecret.clientSecret;
-    const { error } = await stripe.confirmCardPayment(clientSecret, {
+    const error = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card: elements.getElement(CardElement),
       },
     });
-    //  confirmParams: {
-    //     return_url: "http://localhost:4242",
-    //   },
+
+    console.log();
 
     if (error.type === "card_error" || error.type === "validation_error") {
       setMessage(error.message);
     } else {
-      //   setMessage("An unexpected error occured.");
+      //setMessage("An unexpected error occured.");
       setTimeout(() => {
         clearCart();
         navigate("/");
-      }, 5000);
+      }, 3000);
     }
 
     setIsLoading(false);
@@ -95,7 +97,8 @@ export default function CheckoutForm() {
         <p>Test Card Number: 4242 4242 4242 4242</p>
       </article>
       <form id="payment-form" onSubmit={handleSubmit}>
-        <CardElement id="card-element" />
+        <CardElement id="card-element" onChange={handelChange} />
+        {/* <PaymentElement id="payment-element" /> */}
         <button disabled={isLoading || !stripe || !elements} id="submit">
           <span id="button-text">
             {isLoading ? (
@@ -110,4 +113,5 @@ export default function CheckoutForm() {
       </form>
     </>
   );
-}
+};
+export default CheckoutForm;
